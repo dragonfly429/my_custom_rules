@@ -3,7 +3,7 @@
 
 payload:
   # 常用流媒体和社交媒体
-  - DOMAIN-SUFFIX,youtube.com,🛸 节点选择 # YouTube 域名
+  - DOMAIN-SUFFIX,youtube.com,DIRECT # YouTube 域名
   - DOMAIN-SUFFIX,googlevideo.com,🛸 节点选择 # YouTube 视频流
   - DOMAIN-SUFFIX,tiktok.com,🛸 节点选择 # TikTok 主域名
   - DOMAIN-SUFFIX,byteoversea.com,🛸 节点选择 # TikTok 相关域名
