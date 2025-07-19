@@ -1,0 +1,18 @@
+# my_custom_rules.yaml
+# 这个文件将包含你希望通过代理访问的域名规则
+
+payload:
+  # 常用流媒体和社交媒体
+  - DOMAIN-SUFFIX,youtube.com,🛸 节点选择 # YouTube 域名
+  - DOMAIN-SUFFIX,googlevideo.com,🛸 节点选择 # YouTube 视频流
+  - DOMAIN-SUFFIX,tiktok.com,🛸 节点选择 # TikTok 主域名
+  - DOMAIN-SUFFIX,byteoversea.com,🛸 节点选择 # TikTok 相关域名
+  - DOMAIN-SUFFIX,tiktokcdn.com,🛸 节点选择 # TikTok CDN
+
+  # 你可能还想添加其他常用海外服务，例如：
+  # - DOMAIN-SUFFIX,openai.com,🛸 节点选择 # ChatGPT
+  # - DOMAIN-SUFFIX,twitter.com,🛸 节点选择 # Twitter
+  # - DOMAIN-SUFFIX,instagram.com,🛸 节点选择 # Instagram
+  # - DOMAIN-SUFFIX,facebook.com,🛸 节点选择 # Facebook
+  # - DOMAIN-SUFFIX,netflix.com,🛸 节点选择 # Netflix
+  # - DOMAIN-SUFFIX,github.com,🛸 节点选择 # GitHub
