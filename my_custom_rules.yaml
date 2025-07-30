@@ -1,18 +1,23 @@
-# my_custom_rules.yaml
-# 这个文件将包含你希望通过代理访问的域名规则
+# 自定义规则文件示例 custom.yaml
 
-payload:
-  # 常用流媒体和社交媒体
-  - DOMAIN-SUFFIX,youtube.com,DIRECT # YouTube 域名
-  - DOMAIN-SUFFIX,googlevideo.com,🛸 节点选择 # YouTube 视频流
-  - DOMAIN-SUFFIX,tiktok.com,🛸 节点选择 # TikTok 主域名
-  - DOMAIN-SUFFIX,byteoversea.com,🛸 节点选择 # TikTok 相关域名
-  - DOMAIN-SUFFIX,tiktokcdn.com,🛸 节点选择 # TikTok CDN
+# 注意：
+# - 每一条规则按顺序从上到下匹配
+# - 一旦命中某条规则，流量就按对应策略处理，不再继续匹配下条规则
+# - 支持的匹配类型有 DOMAIN, DOMAIN-SUFFIX, DOMAIN-KEYWORD, IP-CIDR 等
 
-  # 你可能还想添加其他常用海外服务，例如：
-  # - DOMAIN-SUFFIX,openai.com,🛸 节点选择 # ChatGPT
-  # - DOMAIN-SUFFIX,twitter.com,🛸 节点选择 # Twitter
-  # - DOMAIN-SUFFIX,instagram.com,🛸 节点选择 # Instagram
-  # - DOMAIN-SUFFIX,facebook.com,🛸 节点选择 # Facebook
-  # - DOMAIN-SUFFIX,netflix.com,🛸 节点选择 # Netflix
-  # - DOMAIN-SUFFIX,github.com,🛸 节点选择 # GitHub
+rules:
+  # sc的直连
+  - DOMAIN-SUFFIX,starcharge.cloud,DIRECT
+  # IP段匹配
+  - IP-CIDR,192.168.0.0/16,DIRECT      # 本地局域网直连
+  - IP-CIDR,10.0.0.0/8,DIRECT          # 本地局域网直连
+
+  # 指定某些域名走代理组（通常是主节点选择组）
+  - DOMAIN-SUFFIX,google.com,US节点组
+
+  # 关键词匹配，匹配域名中包含“video”的流量走代理
+  # - DOMAIN-KEYWORD,video,🛸 节点选择
+
+
+  # 你可以继续添加更多自定义规则，如特殊服务、游戏流量、广告屏蔽等
+
