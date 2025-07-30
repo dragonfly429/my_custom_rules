@@ -1,35 +1,39 @@
-const main = (config) => {  
-  // 清空所有现有的 rule-providers，只保留您的自定义规则提供者  
-  config["rule-providers"] = {  
-    "my-high-priority-rules": {  
-      type: "http",  
-      behavior: "classical",  
-      url: "https://raw.githubusercontent.com/dragonfly429/my_custom_rules/refs/heads/main/my_custom_rules.yaml",  
-      interval: 11440,  
-      path: "./my_rules/my_custom_rules.yaml"  
-    }  
-  };  
+const main = (config) => {
+  // 常量定义
+  const BASE_URL = "https://raw.githubusercontent.com/dragonfly429/my_custom_rules/refs/heads/main";
+  const RULE_PROVIDERS_CONFIG = [
+    { name: "zt-proxy", file: "zt_proxy.yaml", target: "🛸 节点选择" },
+    { name: "zt-proxy-ai", file: "zt_proxy_ai.yaml", target: "🛸 节点选择" },
+    { name: "zt-direct", file: "zt_direct.yaml", target: "DIRECT" }
+  ];
   
-  // 查找合适的代理组  
-  let targetProxy = "DIRECT";  
-  if (config["proxy-groups"] && config["proxy-groups"].length > 0) {  
-    // 优先查找名称包含 "proxy" 的组  
-    const proxyGroup = config["proxy-groups"].find(group =>   
-      group.name.toLowerCase().includes("proxy")  
-    );  
-    if (proxyGroup) {  
-      targetProxy = proxyGroup.name;  
-    } else {  
-      // 如果没找到，使用第一个代理组  
-      targetProxy = config["proxy-groups"][0].name;  
-    }  
-  }  
+  // 保留现有的 rule-providers，并添加新的自定义规则提供者
+  if (!config["rule-providers"]) {
+    config["rule-providers"] = {};
+  }
   
-  // 清空所有现有规则，只保留您的自定义规则  
-  config["rules"] = [  
-    `RULE-SET,my-high-priority-rules,${targetProxy}`,  
-    "MATCH,DIRECT"  // 添加一个兜底规则，未匹配的流量直连  
-  ];  
+  // 批量添加规则提供者
+  RULE_PROVIDERS_CONFIG.forEach(provider => {
+    config["rule-providers"][provider.name] = {
+      type: "http",
+      behavior: "classical",
+      url: `${BASE_URL}/${provider.file}`,
+      interval: 11440,
+      path: `./my_rules/${provider.file}`
+    };
+  });  
+  
+  // 保留现有规则，并在前面插入新的自定义规则
+  if (!config["rules"]) {
+    config["rules"] = [];
+  }
+  
+  // 在现有规则前插入新的规则
+  const newRules = RULE_PROVIDERS_CONFIG.map(provider => {
+    return `RULE-SET,${provider.name},${provider.target}`;
+  });
+  
+  config["rules"] = [...newRules, ...config["rules"]];  
   
   return config;  
 }
