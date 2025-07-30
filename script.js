@@ -27,7 +27,7 @@ const main = (config) => {
   if (existingGroupIndex !== -1) {
     config["proxy-groups"][existingGroupIndex] = ush2Group;
   } else {
-    config["proxy-groups"].push(ush2Group);
+    config["proxy-groups"].unshift(ush2Group);
   }
 
   // 常量定义
@@ -65,6 +65,5 @@ const main = (config) => {
   });
   
   config["rules"] = [...newRules, ...config["rules"]];  
-  
   return config;  
 }
