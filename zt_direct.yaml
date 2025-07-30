@@ -1,2 +1,3 @@
 payload:
   - DOMAIN-SUFFIX,starcharge.cloud #sc internal net
+  - DOMAIN-SUFFIX,wbtz.cloud
