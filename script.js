@@ -18,7 +18,7 @@ const main = (config) => {
   // 创建USH2代理组
   const ush2Group = {
     name: "USH2",
-    type: "select",
+    type: "url-test",
     proxies: usHysteria2Proxies
   };
 
