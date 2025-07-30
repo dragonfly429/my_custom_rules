@@ -67,3 +67,5 @@ const main = (config) => {
   config["rules"] = [...newRules, ...config["rules"]];  
   return config;  
 }
+
+module.exports = { main };
