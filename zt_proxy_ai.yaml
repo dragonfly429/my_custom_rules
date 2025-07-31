@@ -1,6 +1,6 @@
 payload:
   - DOMAIN-SUFFIX,grok.com
   - DOMAIN-SUFFIX,x.ai
-  - DOMAIN-SUFFIX,reddit.com
   - DOMAIN-SUFFIX,openai.com
   - DOMAIN-SUFFIX,chatgpt.com
+  - DOMAIN-KEYWORD,perplexity

@@ -1,5 +1,16 @@
 {
+  "name": "my-custom-rules",
+  "version": "1.0.0",
+  "description": "Clash configuration processor for Aliyun FC",
+  "main": "fc/index.js",
   "dependencies": {
-    "js-yaml": "^4.1.0"
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "js-yaml": "^4.1.0",
+    "axios": "^1.6.0"
+  },
+  "scripts": {
+    "start": "node fc/index.js",
+    "test": "node test/test.main.js"
   }
 }
