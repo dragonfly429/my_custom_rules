@@ -125,16 +125,93 @@ app.get('/*', async (req, res) => {
         console.log('开始配置自定义规则提供者...');
         
         // 创建自定义的规则提供者配置
-        // 这些规则提供者从GitHub仓库获取最新的规则文件
-        RULE_PROVIDERS_CONFIG.forEach(provider => {
-            newRuleProviders[provider.name] = {
-                type: 'http',                                     // 类型：HTTP远程获取
-                behavior: 'classical',                           // 行为：经典模式
-                url: `${BASE_URL}/${provider.file}`,            // 规则文件URL
-                interval: 11440,                                 // 更新间隔（秒）
-                path: `./my_rules/${provider.file}`             // 本地缓存路径
-            };
-            console.log(`配置规则提供者: ${provider.name} -> ${provider.target}`);
+        // 使用Promise.all并发获取所有文件的ETag，提高性能
+        const providerPromises = RULE_PROVIDERS_CONFIG.map(async (provider) => {
+            const startTime = Date.now(); // 移到try块外部，确保在catch中也能访问
+            try {
+                // 获取文件的ETag，确保缓存更新
+                console.log(`[DEBUG] 开始获取 ${provider.file} 的ETag... (开始时间: ${new Date().toISOString()})`);
+                
+                const headResponse = await axios.head(`${BASE_URL}/${provider.file}`, {
+                    timeout: 20000, // 20秒超时
+                    headers: {
+                        'User-Agent': 'FC-Clash-Config-Generator/1.0'
+                    }
+                });
+                
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                console.log(`[DEBUG] ${provider.file} 请求完成 - 耗时: ${duration}ms, 状态: ${headResponse.status}`);
+                
+                const etag = headResponse.headers['etag'];
+                
+                // 处理ETag，用于缓存控制
+                let cleanEtag = '';
+                if (etag) {
+                    // 移除ETag中的引号和特殊字符，只保留字母数字
+                    cleanEtag = etag.replace(/["']/g, '').substring(0, 8);
+                    console.log(`${provider.file} ETag: ${etag} (简化: ${cleanEtag})`);
+                } else {
+                    // 如果无法获取ETag，使用当前时间戳
+                    cleanEtag = Date.now().toString().substring(-8);
+                    console.log(`无法获取 ${provider.file} 的ETag，使用时间戳: ${cleanEtag}`);
+                }
+                
+                const providerConfig = {
+                    type: 'http',                                     // 类型：HTTP远程获取
+                    behavior: 'classical',                           // 行为：经典模式
+                    url: `${BASE_URL}/${provider.file}`,            // 规则文件URL
+                    interval: 11440,                                 // 更新间隔（秒）
+                    path: `./my_rules/${cleanEtag}_${provider.file}` // 本地缓存路径（带ETag确保更新）
+                };
+                console.log(`配置规则提供者: ${provider.name} -> ${provider.target} (ETag: ${cleanEtag})`);
+                
+                return { name: provider.name, config: providerConfig };
+                
+            } catch (error) {
+                // 如果获取文件信息失败，使用默认配置
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                console.error(`[ERROR] 获取 ${provider.file} 信息失败 - 耗时: ${duration}ms`);
+                console.error(`[ERROR] 错误类型: ${error.code || 'UNKNOWN'}`);
+                console.error(`[ERROR] 错误消息: ${error.message}`);
+                
+                if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+                    console.error(`[ERROR] ${provider.file} 请求超时 (15秒)`);
+                    console.error(`[ERROR] 请求URL: ${BASE_URL}/${provider.file}`);
+                } else if (error.response) {
+                    console.error(`[ERROR] ${provider.file} HTTP错误 - 状态码: ${error.response.status}`);
+                    console.error(`[ERROR] ${provider.file} 响应头:`, JSON.stringify(error.response.headers, null, 2));
+                } else if (error.request) {
+                    console.error(`[ERROR] ${provider.file} 网络错误 - 无响应`);
+                    console.error(`[ERROR] 请求配置:`, JSON.stringify(error.config, null, 2));
+                } else {
+                    console.error(`[ERROR] ${provider.file} 未知错误:`, error);
+                }
+                
+                console.warn(`使用默认配置继续处理 ${provider.file}`);
+                const fallbackEtag = Date.now().toString().substring(-8);
+                
+                const providerConfig = {
+                    type: 'http',
+                    behavior: 'classical',
+                    url: `${BASE_URL}/${provider.file}`,
+                    interval: 11440,
+                    path: `./my_rules/${fallbackEtag}_${provider.file}`
+                };
+                console.log(`配置规则提供者: ${provider.name} -> ${provider.target} (备用ETag: ${fallbackEtag})`);
+                
+                return { name: provider.name, config: providerConfig };
+            }
+        });
+        
+        // 等待所有HTTP请求完成
+        const providerResults = await Promise.all(providerPromises);
+        
+        // 将结果添加到newRuleProviders对象中
+        providerResults.forEach(result => {
+            newRuleProviders[result.name] = result.config;
         });
         
         // 将自定义规则提供者放在最前面，然后是原有的规则提供者
