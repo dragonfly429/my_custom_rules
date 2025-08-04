@@ -3,3 +3,8 @@ payload:
   - DOMAIN-SUFFIX,reddit.com
   - DOMAIN-SUFFIX,github.com
   - DOMAIN-SUFFIX,substack.com
+  - DOMAIN-KEYWORD,microsoft
+  - DOMAIN-KEYWORD,facebook
+  - DOMAIN-KEYWORD,tiktok
+  - DOMAIN-KEYWORD,bewildcard
+  - DOMAIN-KEYWORD,github
