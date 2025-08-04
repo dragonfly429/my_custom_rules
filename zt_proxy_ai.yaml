@@ -1,8 +1,13 @@
 payload:
+  # fundation mode
   - DOMAIN-SUFFIX,grok.com
   - DOMAIN-SUFFIX,x.ai
   - DOMAIN-SUFFIX,openai.com
   - DOMAIN-SUFFIX,chatgpt.com
+  # ai tools
   - DOMAIN-KEYWORD,perplexity
-  - DOMAIN-SUFFIX,notion.so
   - DOMAIN-KEYWORD,lovable
+  # my tools
+  - DOMAIN-SUFFIX,notion.so
+  # dev tools
+  - DOMAIN-SUFFIX,trae.ai
