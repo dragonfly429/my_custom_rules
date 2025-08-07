@@ -263,17 +263,17 @@ app.get('/*', async (req, res) => {
         
         // ========== 步骤7：处理MATCH规则 ==========
         // 查找现有的MATCH规则（通常是最后一条兜底规则）
-        const matchIndex = config.rules.findIndex(rule => rule.startsWith('MATCH,'));
-        if (matchIndex !== -1) {
-            // 如果找到MATCH规则，将其修改为直连
-            const oldMatchRule = config.rules[matchIndex];
-            config.rules[matchIndex] = 'MATCH,DIRECT';
-            console.log(`修改MATCH规则: ${oldMatchRule} -> MATCH,DIRECT`);
-        } else {
-            // 如果没有找到MATCH规则，添加一个新的
-            config.rules.push('MATCH,DIRECT');
-            console.log('添加新的MATCH规则: MATCH,DIRECT');
-        }
+        // const matchIndex = config.rules.findIndex(rule => rule.startsWith('MATCH,'));
+        // if (matchIndex !== -1) {
+        //     // 如果找到MATCH规则，将其修改为直连
+        //     const oldMatchRule = config.rules[matchIndex];
+        //     config.rules[matchIndex] = 'MATCH,DIRECT';
+        //     console.log(`修改MATCH规则: ${oldMatchRule} -> MATCH,DIRECT`);
+        // } else {
+        //     // 如果没有找到MATCH规则，添加一个新的
+        //     config.rules.push('MATCH,DIRECT');
+        //     console.log('添加新的MATCH规则: MATCH,DIRECT');
+        // }
         
         // ========== 步骤8：生成并返回YAML配置 ==========
         console.log('开始生成YAML配置文件...');
