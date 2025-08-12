@@ -73,7 +73,7 @@ app.get('/*', async (req, res) => {
         // ========== 步骤3：创建USH2代理组 ==========
         // 筛选出美国地区的Hysteria2协议代理节点
         const ush2Proxies = config.proxies.filter(proxy => 
-            proxy.name.includes('US') && proxy.type === 'hysteria2'
+            proxy.name.includes('US')
         );
         const ush2ProxyNames = ush2Proxies.map(proxy => proxy.name);
         console.log(`创建USH2代理组，包含 ${ush2ProxyNames.length} 个美国Hysteria2节点`);
@@ -242,12 +242,6 @@ app.get('/*', async (req, res) => {
         // 创建新的规则数组，这些规则将被添加到最前面
         const newRules = [];
         
-        // 添加Reddit专用规则（如果USH2代理组存在）
-        // Reddit访问使用美国节点以获得更好的体验
-        if (ush2ProxyNames.length > 0) {
-            newRules.push('DOMAIN-SUFFIX,reddit.com,USH2');
-            console.log('添加Reddit专用规则: DOMAIN-SUFFIX,reddit.com,USH2');
-        }
         
         // 根据配置添加RULE-SET规则
         // 按照优先级顺序：代理规则 -> AI规则 -> 直连规则
